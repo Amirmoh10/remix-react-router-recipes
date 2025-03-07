@@ -1,5 +1,6 @@
 import {
   isRouteErrorResponse,
+  Link,
   Links,
   Meta,
   Outlet,
@@ -9,6 +10,19 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import {
+  DiscoverIcon,
+  HomeIcon,
+  RecipeBookIcon,
+  SettingsIcon,
+} from "./components/icons";
+
+export function meta({}: Route.MetaArgs) {
+  return [
+    { title: "Remix recipes" },
+    { name: "description", content: "Welcome to Remix Recipes!" },
+  ];
+}
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -32,7 +46,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body>
+      <body className=" flex h-screen">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -42,7 +56,48 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <nav className="bg-green-700 text-white">
+        <ul className="flex flex-col">
+          <li>
+            <AppNavLink to="/">
+              <HomeIcon />
+            </AppNavLink>
+          </li>
+          <li>
+            <AppNavLink to="/settings">
+              <SettingsIcon />
+            </AppNavLink>
+          </li>
+          <li>
+            <AppNavLink to="/discover">
+              <DiscoverIcon />
+            </AppNavLink>
+          </li>
+          <li>
+            <AppNavLink to="/app">
+              <RecipeBookIcon />
+            </AppNavLink>
+          </li>
+        </ul>
+      </nav>
+      <div className="p-4 w-full md:w-[calc(100%-4rem)]">
+        <Outlet />
+      </div>
+    </>
+  );
+}
+
+function AppNavLink(porps: { children: React.ReactNode; to: string }) {
+  const { children, to } = porps;
+  return (
+    <li className="w-16">
+      <Link to={to} className="py-4 flex justify-center hover:bg-green-400">
+        {children}
+      </Link>
+    </li>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
