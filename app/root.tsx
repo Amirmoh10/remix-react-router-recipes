@@ -3,6 +3,7 @@ import {
   Link,
   Links,
   Meta,
+  NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
@@ -58,7 +59,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <>
-      <nav className="bg-green-700 text-white">
+      <nav className="bg-black text-white">
         <ul className="flex flex-col">
           <li>
             <AppNavLink to="/">
@@ -93,9 +94,16 @@ function AppNavLink(porps: { children: React.ReactNode; to: string }) {
   const { children, to } = porps;
   return (
     <li className="w-16">
-      <Link to={to} className="py-4 flex justify-center hover:bg-green-400">
+      <NavLink
+        to={to}
+        className={({ isActive }) =>
+          `py-4 flex justify-center hover:bg-gray-800 ${
+            isActive ? "bg-gray-700" : ""
+          }`
+        }
+      >
         {children}
-      </Link>
+      </NavLink>
     </li>
   );
 }
