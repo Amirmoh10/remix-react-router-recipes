@@ -1,13 +1,15 @@
 import {
   isRouteErrorResponse,
-  Link,
   Links,
   Meta,
   NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useNavigation,
+  useResolvedPath,
 } from "react-router";
+import classNames from "classnames";
 
 import type { Route } from "./+types/root";
 import "./app.css";
@@ -47,7 +49,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className=" flex h-screen">
+      <body className="md:flex md:h-screen">
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -60,27 +62,19 @@ export default function App() {
   return (
     <>
       <nav className="bg-black text-white">
-        <ul className="flex flex-col">
-          <li>
-            <AppNavLink to="/">
-              <HomeIcon />
-            </AppNavLink>
-          </li>
-          <li>
-            <AppNavLink to="/settings">
-              <SettingsIcon />
-            </AppNavLink>
-          </li>
-          <li>
-            <AppNavLink to="/discover">
-              <DiscoverIcon />
-            </AppNavLink>
-          </li>
-          <li>
-            <AppNavLink to="/app">
-              <RecipeBookIcon />
-            </AppNavLink>
-          </li>
+        <ul className="flex md:flex-col">
+          <AppNavLink to="/">
+            <HomeIcon />
+          </AppNavLink>
+          <AppNavLink to="/settings">
+            <SettingsIcon />
+          </AppNavLink>
+          <AppNavLink to="/discover">
+            <DiscoverIcon />
+          </AppNavLink>
+          <AppNavLink to="/app">
+            <RecipeBookIcon />
+          </AppNavLink>
         </ul>
       </nav>
       <div className="p-4 w-full md:w-[calc(100%-4rem)]">
@@ -92,14 +86,22 @@ export default function App() {
 
 function AppNavLink(porps: { children: React.ReactNode; to: string }) {
   const { children, to } = porps;
+  const navigation = useNavigation();
+  const { pathname } = useResolvedPath(to);
+
+  const isPending =
+    navigation.state === "loading" &&
+    navigation.location?.pathname === pathname;
+
   return (
     <li className="w-16">
       <NavLink
         to={to}
         className={({ isActive }) =>
-          `py-4 flex justify-center hover:bg-gray-800 ${
-            isActive ? "bg-gray-700" : ""
-          }`
+          classNames("py-4 flex justify-center hover:bg-gray-800", {
+            "bg-gray-700": isActive,
+            "animate-pulse": isPending,
+          })
         }
       >
         {children}
